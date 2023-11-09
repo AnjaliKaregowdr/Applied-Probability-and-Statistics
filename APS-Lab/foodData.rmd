@@ -1,0 +1,218 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-08-28"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(ggplot2)
+```
+
+
+```{r}
+foodData=read.csv('Data/food-texture.csv', header = TRUE, row.names = 1)
+head(foodData)
+str(foodData)
+```
+
+```{r}
+#add another column to dataframe called Taste
+#foodData['Taste'] = sample(c('poor','fair','good','very good'), replace = TRUE, nrow(foodData), p=c(0.25,0.25,0.25,0.25))
+```
+
+```{r}
+continuous_cols = c('Oil' , 'Density', 'Fracture', 'Hardness')
+categorical_cols = c('Crispy', 'Taste')
+
+```
+
+```{r}
+#convert categorical columns to factor type
+foodData[categorical_cols]=lapply(foodData[categorical_cols], factor)
+str(foodData)
+```
+
+```{r}
+#to write the added column Taste to CSV file(foodData)
+#write.csv(foodData, 'Data/food-texture.csv')
+```
+
+SCATTERPLOT
+
+```{r}
+p = ggplot(data = foodData) + 
+  geom_point(aes(x=Oil, y=Density))
+p
+```
+
+```{r}
+p = ggplot(data = foodData) + 
+  geom_point(aes(x=Oil, y=Density, color=Crispy))
+p
+```
+
+BOXPLOT
+
+```{r}
+p = ggplot(data = foodData) + 
+  geom_boxplot(aes(x=Crispy, y=Density))
+p
+```
+
+```{r}
+foodData['Crispy'] == 8
+foodData[foodData['Crispy']==8, ]
+den8=foodData[foodData['Crispy']==8,'Density']
+den8
+
+```
+
+```{r}
+den10=foodData[foodData['Crispy']==10,'Density']
+den10
+mean(den10)
+den10-mean(den10)
+#squared mean centerd value
+(den10-mean(den10))^2
+#squared deviation
+mean((den10-mean(den10))^2) #mean of squared deviation from the average= this is variance
+sqrt(mean((den10-mean(den10))^2)) #standard deviation
+var(den10)
+
+#to calc Percentile
+median(den10)
+den10 <= median(den10)
+mean(den10 <= median(den10))*100
+sum(den10 <= median(den10))
+quantile(den10, 0.25) #25th percentile of density value
+quantile(den10, 0.5) #median is 50th percentile
+quantile(den10, 0.75) #75th percentile
+quantile(den10, 0.75)-quantile(den10, 0.25) #IQR
+```
+
+```{r}
+den13=foodData[foodData['Crispy']==13,'Density']
+den13
+
+mean(den13)
+median(den13)
+
+sqrt(mean((den13-mean(den13))^2)) #standard deviation
+var(den13)
+
+sum(den13 <= median(den13))
+
+quantile(den13, 0.25) #25th percentile of density value
+quantile(den13, 0.5) #median is 50th percentile
+quantile(den13, 0.75)
+quantile(den13, 0.75)-quantile(den13, 0.25)
+```
+
+HISTOGRAM
+
+```{r}
+p = ggplot(data = foodData) + 
+  geom_histogram(aes(x=Density), binwidth = 100, color='blue')
+
+#for only whose crispy value is 13
+p = ggplot(data = foodData[foodData$Crispy==13, ]) + 
+  geom_histogram(aes(x=Density), binwidth = 100, color='blue')
+p
+```
+
+BARPLOT
+
+```{r}
+p = ggplot(data = foodData) + 
+  geom_bar(aes(x=Crispy) , color='blue')
+p
+```
+
+
+06/09/2023
+
+```{r}
+density=foodData$Density
+density.lb=2.2*density
+density.gm=1000*density
+density_MC=density-mean(density)
+mean(density_MC)
+```
+
+```{r}
+cbind(density,density_MC)
+str(cbind(density,density_MC)) #matrix(as a result of combining vectors)
+dfDensity=data.frame(cbind(density,density_MC)) #for ggplot values should stored in dataframe
+```
+
+```{r}
+#Density
+p=ggplot(data=dfDensity) + geom_point(aes(x=c(1:nrow(foodData)) , y=density), color='blue') + labs(x='Sample Number', y='Density(Kg/m^3)', title = 'Component plot of density') + geom_line(aes(x=c(1:nrow(foodData)),y=mean(density)), color = 'red')
+#c(1:50)=c(1:nrow(foodData)
+p
+```
+
+```{r}
+#MC_Density(more informative)
+p2=ggplot(data=dfDensity) + geom_point(aes(x=c(1:nrow(foodData)) , y=density_MC), color='blue') + labs(x='Sample Number', y='MC_Density(Kg/m^3)', title = 'Component plot of density') + geom_line(aes(x=c(1:nrow(foodData)),y=mean(density_MC)), color = 'red')
+#c(1:50)=c(1:nrow(foodData)
+p2
+```
+
+
+```{r}
+#Density
+p=ggplot(data=dfDensity) + geom_point(aes(x=c(1:nrow(foodData)) , y=density), color='blue') + labs(x='Sample Number', y='Density(Kg/m^3)', title = 'Component plot of density') + geom_line(aes(x=c(1:nrow(foodData)),y=mean(density)), color = 'red') + geom_line(aes(x=c(1:nrow(foodData)),y=mean(density)+sd(density)),  color='red', linetype = 'dashed') + geom_line(aes(x=c(1:nrow(foodData)),y=mean(density)-sd(density)),  color='red', linetype = 'dashed')
+#c(1:50)=c(1:nrow(foodData)
+p
+```
+
+```{r}
+density #density vector
+density-mean(density) #mean-centered density vector(above and below average values)
+(density-mean(density))**2 #squared mean-centered density vector
+
+mean((density-mean(density))**2) #mean of the squared mean-centered density vector = Variance
+
+sqrt(mean((density-mean(density))**2)) #standard deviation
+
+var(density)
+sd(density)
+```
+
+```{r}
+z_density = (density - mean(density)) / sd(density) #standard scores 
+z_density
+(density.lb - mean(density.lb)) / sd(density.lb)  
+(density.gm - mean(density.gm)) / sd(density.gm)  
+
+```
+
+```{r}
+scale(density)
+scale(density.lb)
+density(density.gm)
+```
+
+```{r}
+continuous_cols = c('Oil' , 'Density', 'Fracture', 'Hardness')
+foodData[continuous_cols]=lapply(foodData[continuous_cols], scale)
+foodData[continuous_cols]
+str(foodData)
+```
+
+SC=StandardScalar()
+sc.fit(foodData_train[continuos_cols])
+sc.fit_transform(foodData_train[continuos_cols])
+sc.transform(foodData_test[continuos_cols])
+
+
+```{r}
+
+```
+

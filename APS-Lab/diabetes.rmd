@@ -1,0 +1,57 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-09-04"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+data(diabetes)
+Diabetes_Data=read.csv('Data/diabetes.csv')
+
+head(Diabetes_Data)
+str(Diabetes_Data)
+```
+
+```{r}
+library(ggplot2)
+```
+
+SCATTERPLOT
+
+```{r}
+p = ggplot(data = Diabetes_Data) + 
+  geom_point(aes(x=Age, y=BloodPressure))
+p
+```
+
+BOXPLOT
+
+```{r}
+p = ggplot(data = Diabetes_Data) + 
+  geom_boxplot(aes(x=Age, y=BloodPressure))
+p
+```
+
+HISTOGRAM
+
+```{r}
+p = ggplot(data = Diabetes_Data) + 
+  geom_histogram(aes(x=Age), binwidth = 10, color='blue')
+p
+```
+
+BARPLOT
+
+```{r}
+p = ggplot(data = Diabetes_Data) + 
+  geom_bar(aes(x=Age) , color='blue')
+p
+```
+
+
+

@@ -1,0 +1,135 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-10-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+
+```{r}
+n=4
+p=4/10
+j=2
+dbinom(j,n,p)  #P(X=j) where X-Bin(n,p)   #dbinom calc PMF   #pbinom calcs accumulated prob
+```
+
+```{r}
+c(0:2)  #or seq(0,2) to create a vector
+```
+
+```{r}
+#dbinom(0,n,p)+dbinom(1,n,p)+dbinom(2,n,p)
+sum(dbinom(0:2,n,p))   
+#or
+pbinom(j,n,p)
+```
+
+```{r}
+#what is the probability that we will get at least 2 white balls
+1 - pbinom(1,n,p) #P(X>=2)
+```
+
+```{r}
+nsimulations=100
+rbinom(nsimulations,n,p)    #number of success outputs at each draw
+```
+
+```{r}
+#calc for prob=2
+nsimulations=1e5
+simulatedData = rbinom(nsimulations,n,p)   #simulating a binomial random variable
+mean(simulatedData == 2)  #simulated prob that X=2
+dbinom(2,n,p)  #theoritical probability that x=2
+mean(simulatedData <= 2)   #simulated prob that X<=2
+pbinom(2,n,p) #theoritical probability that x<=2
+mean(simulatedData >= 2)   #simulated prob that X>=2
+pbinom(2,n,p)     #theoritical probability that x>=2
+```
+
+
+```{r}
+n=4
+p=0.4
+nsimulations=1e5
+simulatedData = rbinom(nsimulations,n,p)  
+dfBalls = as.data.frame(table(simulatedData))
+colnames(dfBalls) = c('Values', 'Frequency')
+dfBalls['Probability']= dfBalls['Frequency'] / nsimulations
+g = ggplot(data = dfBalls, aes(x=Values, y= Probability))+geom_col(width = 0.3, fill = 'steelblue')+ggtitle('Probability Mass Function (PMF) of X-Bin(n=4,p=0.4)')+theme_minimal()
+g
+```
+
+```{r}
+n=4
+p=0.4
+nsimulations=1e5
+simulatedData = rbinom(nsimulations,n,p)  
+mean(simulatedData)   #long run avg of the simulated values of the random variable
+#simulatedData - mean(simulatedData)     #mean-centered simulated values -deviation from average
+#simulatedData - mean(simulatedData)^2   #squared mean-centered simulated values -squared deviation from average
+mean((simulatedData - mean(simulatedData))^2)   #avg of the squared-mean-centered simulated values
+sqrt(mean((simulatedData - mean(simulatedData))^2))
+
+var(simulatedData)
+sd(simulatedData)
+#0*sum(simulatedData == 0) + 1*sum(simulatedData == 1) +2*sum(simulatedData == 2)+3*sum(simulatedData == 3)+4*sum(simulatedData == 4)
+j = c(0:n)
+p = dbinom(j,n,p)
+j
+p
+sum(j*p)
+j %*% p
+```
+
+X=heart rate of a random patient, which is a random variable. We will assume that the heart rates are symmetrically distributed aroud 74 BPM
+
+```{r}
+nsimulations=100
+simulatedData = rnorm(nsimulations,mean = 74, sd = 6)
+print(simulatedData)
+mean(simulatedData)#Expected value(BPM)
+mean((simulatedData - mean(simulatedData))^2)#variance of heartrates(BPM)^2
+sqrt(mean((simulatedData - mean(simulatedData))^2))#standard deviations(BPM)
+```
+
+```{r}
+dfHeart = as.data.frame(simulatedData)
+colnames(dfHeart) = c('HR')
+head(dfHeart)  #Component plot of the simulated values(which can be seen as a vector)
+p = ggplot(data = dfHeart)+ 
+  geom_point(aes(x=1:nrow(dfHeart), y=HR), color = 'blue') + labs(x='Patient #',y='HR(BPM)') + 
+  geom_hline(yintercept = mean(simulatedData), color='red') + 
+  geom_hline(yintercept = mean(simulatedData) + sqrt(mean((simulatedData - mean(simulatedData))^2)), color = 'green') + 
+  geom_hline(yintercept = mean(simulatedData) - sqrt(mean((simulatedData - mean(simulatedData))^2)), color = 'green') + theme_minimal()
+p
+```
+
+```{r}
+#Expected value
+mean(simulatedData)
+#variance
+var(simulatedData)
+#Standard deviation
+sd(simulatedData)
+#what fraction of patients falls under 1 std deviation
+mean(abs(simulatedData - mean(simulatedData)) <= sd(simulatedData))
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+

@@ -1,0 +1,134 @@
+---
+title: "emergency.rmd"
+output: html_document
+date: "2023-08-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+dfpatient=(read.csv("Data/emergency.csv"))
+head(dfpatient)
+
+```
+
+```{r}
+#dfpatient=(read.csv("Data/emergency.csv",stringsAsFactors=TRUE))
+#str(dfpatient)
+#levels(dfpatient$Condition)
+#levels(dfpatient$Insurance)
+```
+
+```{r}
+str(dfpatient)
+```
+
+
+```{r}
+
+Condition = factor(c('serious', 'fair', 'good'))
+length(levels(Condition))
+
+Insurance=factor(c('insured','not insured'))
+length(levels(Insurance))
+
+```
+
+```{r}
+#dfpatient$Condition=as.factor(dfpatient$Condition)
+#str(dfpatient$Condition)
+#levels(dfpatient$Condition)
+```
+
+```{r}
+dfpatient=read.csv('Data/emergency.csv',row.names = 1)
+str(dfpatient)
+categorical_cols=c('Condition','Insurance')
+categorical_cols
+dfpatient[,categorical_cols]=lapply(dfpatient[,categorical_cols], as.factor)
+str(dfpatient[,categorical_cols])
+```
+
+```{r}
+levels(dfpatient$Condition)
+levels(dfpatient$Insurance)
+```
+
+```{r}
+dfpatient$Condition=='serious'
+sum(dfpatient$Condition=='serious')
+mean(dfpatient$Condition=='serious')*100
+```
+
+```{r}
+dfpatient$Condition=='good'
+sum(dfpatient$Condition=='good')
+mean(dfpatient$Condition=='good')*100
+```
+
+```{r}
+dfpatient$Condition=='fair'
+sum(dfpatient$Condition=='fair')
+mean(dfpatient$Condition=='fair')*100
+```
+
+```{r}
+dfpatient$Insurance=='insured'
+sum(dfpatient$Insurance=='insured')
+mean(dfpatient$Insurance=='insured')*100
+```
+
+```{r}
+dfpatient$Insurance=='not insured'
+sum(dfpatient$Insurance=='not insured')
+mean(dfpatient$Insurance=='not insured')*100
+```
+
+```{r}
+#without using conditional probability
+(dfpatient$Insurance=='insured') & (dfpatient$Condition=='serious')
+mean((dfpatient$Insurance=='insured') & (dfpatient$Condition=='serious'))*100
+```
+
+```{r}
+#using conditional probability
+dfpatient[dfpatient$Insurance=='insured',]
+mean(dfpatient[dfpatient$Insurance=='insured',]$Condition=='serious')*100
+#using conditional probability
+#mean((dfpatient$Insurance=='insured') & (dfpatient$Condition=='serious'))/mean(dfpatient$Insurance=='insured')
+```
+
+```{r}
+dfpatient[dfpatient$Condition=='serious',]
+mean(dfpatient[dfpatient$Condition=='serious',]$Insurance=='insured')*100
+
+#how likely patient is insured
+mean(dfpatient$Insurance=='insured')*100
+```
+
+
+
+
+
